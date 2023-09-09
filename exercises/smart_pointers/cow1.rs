@@ -12,8 +12,6 @@
 //
 // Execute `rustlings hint cow1` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
-
 use std::borrow::Cow;
 
 fn abs_all<'a, 'b>(input: &'a mut Cow<'b, [i32]>) -> &'a mut Cow<'b, [i32]> {
@@ -48,7 +46,8 @@ mod tests {
         let slice = [0, 1, 2];
         let mut input = Cow::from(&slice[..]);
         match abs_all(&mut input) {
-            // TODO
+            Cow::Borrowed(_) => Ok(()),
+            _ => Err("Expected borrowed value"),
         }
     }
 
@@ -60,7 +59,8 @@ mod tests {
         let slice = vec![0, 1, 2];
         let mut input = Cow::from(slice);
         match abs_all(&mut input) {
-            // TODO
+            Cow::Owned(_) => Ok(()),
+            _ => Err("Expected owned value"),
         }
     }
 
@@ -70,9 +70,11 @@ mod tests {
         // case the call to `to_mut()` returns a reference to the same data as
         // before.
         let slice = vec![-1, 0, 1];
-        let mut input = Cow::from(slice).to_mut();
+        let mut input = Cow::from(slice); // the rustlings repo was cloned with a bug on this line, reverted later this commit https://github.com/rust-lang/rustlings/commit/33a4f4e454031ea7b318c855625553b413b8afcd
         match abs_all(&mut input) {
-            // TODO
+            Cow::Owned(val) => Ok(()),
+            _ => Err("Expected owned value"),
         }
+        // Ok(())
     }
 }
