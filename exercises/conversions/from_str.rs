@@ -11,6 +11,7 @@
 
 use std::num::ParseIntError;
 use std::str::FromStr;
+use std::collections::VecDeque;
 
 #[derive(Debug, PartialEq)]
 struct Person {
@@ -31,8 +32,6 @@ enum ParsePersonError {
     ParseInt(ParseIntError),
 }
 
-// I AM NOT DONE
-
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
 // 2. Split the given string on the commas present in it
@@ -52,6 +51,33 @@ enum ParsePersonError {
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+
+        if s.len() == 0 {
+            return Err(ParsePersonError::Empty);
+        }
+
+        let mut v = s.split(",").collect::<VecDeque<&str>>();
+
+        if v.len() != 2 {
+            return Err(ParsePersonError::BadLen);
+        }
+
+        let name_as_str = v.pop_front().unwrap();
+        let age_as_str = v.pop_front().unwrap();
+        
+        if name_as_str.len() == 0 {
+            return Err(ParsePersonError::NoName)
+        }
+
+        let age = age_as_str.parse::<usize>();
+        match age {
+            Err(err) => Err(ParsePersonError::ParseInt(err)), 
+            Ok(age) => Ok( Person {
+                age, 
+                name: String::from(name_as_str),
+            })
+        }
+
     }
 }
 
